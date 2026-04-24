@@ -1,40 +1,10 @@
-"""
-UI COMPONENTS - Pixel Art Inspired Interface Elements
-Reusable button and input components with pixel art aesthetic
-"""
-
 import pygame
 from constants import *
 
 class Button:
-    """
-    Pixel art styled button with hover effects and click detection
-    
-    Attributes:
-        rect: pygame.Rect - Button position and size
-        text: str - Button display text
-        color: tuple - Current button color
-        base_color: tuple - Default button color
-        hover_color: tuple - Color when mouse hovers
-        click_color: tuple - Color when clicked
-        hovered: bool - Whether mouse is over button
-    """
     
     def __init__(self, x, y, width, height, text, base_color=COLOR_LIGHT_GREY, 
                  hover_color=COLOR_PURPLE, click_color=COLOR_DARK_PURPLE):
-        """
-        Initialize a new button
-        
-        Args:
-            x: X position on screen
-            y: Y position on screen
-            width: Button width in pixels
-            height: Button height in pixels
-            text: Text to display on button
-            base_color: Default button color (RGB tuple)
-            hover_color: Color when hovering (RGB tuple)
-            click_color: Color when clicked (RGB tuple)
-        """
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
         self.base_color = base_color
@@ -45,14 +15,7 @@ class Button:
         self.clicked = False
     
     def update(self, mouse_pos, mouse_clicked=False):
-        """
-        Update button state based on mouse position and clicks
-        
-        Args:
-            mouse_pos: tuple (x, y) - Current mouse position
-            mouse_clicked: bool - Whether mouse button is pressed
-        """
-        # Check if mouse is over button (pixel perfect collision)
+        # Check if mouse is over button 
         self.hovered = self.rect.collidepoint(mouse_pos)
         
         # Update color based on hover state
@@ -62,26 +25,10 @@ class Button:
             self.color = self.base_color
     
     def is_clicked(self, mouse_pos, mouse_pressed):
-        """
-        Check if button was clicked
-        
-        Args:
-            mouse_pos: tuple (x, y) - Current mouse position
-            mouse_pressed: bool - Whether mouse button is pressed
-            
-        Returns:
-            bool - True if button was clicked
-        """
         return self.rect.collidepoint(mouse_pos) and mouse_pressed
     
     def draw(self, surface, font):
-        """
-        Draw button with pixel art aesthetic (blocky borders)
-        
-        Args:
-            surface: pygame.Surface - Surface to draw on
-            font: pygame.font.Font - Font for rendering text
-        """
+
         # Draw main button rectangle with thick border (pixel art style)
         pygame.draw.rect(surface, self.color, self.rect)
         pygame.draw.rect(surface, COLOR_BLACK, self.rect, 3)  # 3px border for pixel art
@@ -92,27 +39,9 @@ class Button:
         surface.blit(text_surface, text_rect)
 
 
-class AnswerButton(Button):
-    """
-    Specialized button for quiz answers with correct/incorrect states
-    
-    Attributes:
-        is_correct: bool - Whether this is the correct answer
-        state: str - Current state (normal, selected, evaluated)
-    """
-    
+class AnswerButton(Button):  
     def __init__(self, x, y, width, height, text, is_correct):
-        """
-        Initialize answer button
-        
-        Args:
-            x: X position
-            y: Y position
-            width: Button width
-            height: Button height
-            text: Answer text
-            is_correct: Whether this is the correct answer
-        """
+
         super().__init__(x, y, width, height, text, 
                         base_color=COLOR_LIGHT_GREY,
                         hover_color=COLOR_PURPLE,
@@ -122,12 +51,6 @@ class AnswerButton(Button):
         self.selected = False
     
     def set_state(self, state):
-        """
-        Set the button's visual state
-        
-        Args:
-            state: str - "normal", "selected", or "evaluated"
-        """
         self.state = state
         
         # Update colors based on state
@@ -140,13 +63,6 @@ class AnswerButton(Button):
             self.color = COLOR_LIGHT_GREEN if self.is_correct else COLOR_LIGHT_RED
     
     def draw(self, surface, font):
-        """
-        Draw answer button with appropriate state coloring
-        
-        Args:
-            surface: pygame.Surface - Surface to draw on
-            font: pygame.font.Font - Font for rendering text
-        """
         # Draw button rectangle with thick border
         pygame.draw.rect(surface, self.color, self.rect)
         
@@ -168,17 +84,6 @@ class AnswerButton(Button):
             surface.blit(text_surface, (text_x, text_y))
     
     def _wrap_text(self, text, font, max_width=320):
-        """
-        Wrap text to fit within button width
-        
-        Args:
-            text: str - Text to wrap
-            font: pygame.font.Font - Font for measuring
-            max_width: int - Maximum width before wrapping
-            
-        Returns:
-            list - Lines of wrapped text
-        """
         words = text.split()
         lines = []
         current_line = []
@@ -199,34 +104,13 @@ class AnswerButton(Button):
 
 
 class NumberInput:
-    """
-    Text input for selecting number of questions
-    Allows user to type and modify the question count
-    """
-    
     def __init__(self, x, y, width, height, initial_value=DEFAULT_QUESTION_COUNT):
-        """
-        Initialize number input field
-        
-        Args:
-            x: X position
-            y: Y position
-            width: Input width
-            height: Input height
-            initial_value: Starting number value
-        """
         self.rect = pygame.Rect(x, y, width, height)
         self.value = str(initial_value)
         self.active = False
         self.cursor_pos = len(self.value)
     
     def handle_event(self, event):
-        """
-        Handle keyboard input for the number field
-        
-        Args:
-            event: pygame.event.Event - Input event to process
-        """
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSPACE:
                 # Remove last character
@@ -242,22 +126,9 @@ class NumberInput:
                     self.cursor_pos = len(self.value)
     
     def get_value(self):
-        """
-        Get the current numeric value
-        
-        Returns:
-            int - Numeric value in input field
-        """
         return int(self.value) if self.value else MIN_QUESTION_COUNT
     
     def draw(self, surface, font):
-        """
-        Draw the number input field with pixel art style
-        
-        Args:
-            surface: pygame.Surface - Surface to draw on
-            font: pygame.font.Font - Font for rendering
-        """
         # Draw input background and border
         pygame.draw.rect(surface, COLOR_WHITE, self.rect)
         pygame.draw.rect(surface, COLOR_DARK_GREY if self.active else COLOR_BLACK, self.rect, 3)
