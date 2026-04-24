@@ -1,8 +1,3 @@
-"""
-MAIN - Entry point and game loop
-Initializes pygame, manages game states, and runs the main loop
-"""
-
 import pygame
 import sys
 from constants import *
@@ -11,14 +6,8 @@ from menus import (MainMenu, ModeSelectionMenu, QuestionCountMenu,
                    PauseMenu, ResultsScreen)
 from ui_components import AnswerButton
 
-class GameEngine:
-    """
-    Main game engine managing all states and transitions
-    Handles rendering, input, and game flow
-    """
-    
+class GameEngine:    
     def __init__(self):
-        """Initialize game engine and pygame"""
         # Initialize pygame
         pygame.init()
         
@@ -53,9 +42,6 @@ class GameEngine:
         self.answer_buttons = []
     
     def handle_events(self):
-        """
-        Handle all pygame events (keyboard, mouse, quit)
-        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -83,7 +69,6 @@ class GameEngine:
                 self._handle_results_input()
     
     def _handle_main_menu_input(self):
-        """Handle main menu mouse clicks"""
         mouse_pos = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()[0]
         
@@ -98,7 +83,6 @@ class GameEngine:
                 self.running = False
     
     def _handle_mode_selection_input(self):
-        """Handle game mode selection"""
         mouse_pos = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()[0]
         
@@ -120,7 +104,6 @@ class GameEngine:
                 self.current_state = GameState.MAIN_MENU
     
     def _handle_question_count_input(self):
-        """Handle question count selection"""
         mouse_pos = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()[0]
         
@@ -134,7 +117,6 @@ class GameEngine:
                 self.start_quiz(action)
     
     def _handle_playing_input(self):
-        """Handle in-game input during quiz"""
         mouse_pos = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()[0]
         
@@ -163,7 +145,6 @@ class GameEngine:
                 pass
     
     def _handle_pause_input(self):
-        """Handle pause menu input"""
         mouse_pos = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()[0]
         
@@ -179,7 +160,6 @@ class GameEngine:
                 self.quiz = None
     
     def _handle_results_input(self):
-        """Handle results screen input"""
         mouse_pos = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()[0]
         
@@ -198,13 +178,6 @@ class GameEngine:
                 self.quiz = None
     
     def start_quiz(self, question_count, mode=None):
-        """
-        Start a new quiz game
-        
-        Args:
-            question_count: int - Number of questions
-            mode: str - Game mode (uses selected if not specified)
-        """
         if mode is None:
             mode = self.selected_game_mode
         
@@ -213,7 +186,6 @@ class GameEngine:
         self._create_answer_buttons()
     
     def _create_answer_buttons(self):
-        """Create answer buttons for current question"""
         self.answer_buttons = []
         
         button_width = ANSWER_BUTTON_WIDTH
@@ -231,9 +203,6 @@ class GameEngine:
             self.answer_buttons.append(btn)
     
     def update(self):
-        """
-        Update game logic
-        """
         # Check for quiz completion
         if self.current_state == GameState.PLAYING:
             if self.quiz.game_over:
@@ -248,9 +217,6 @@ class GameEngine:
                 self._create_answer_buttons()
     
     def draw(self):
-        """
-        Render current game state
-        """
         if self.current_state == GameState.MAIN_MENU:
             self.main_menu.draw(self.screen, self.font_huge, self.font_large)
         
@@ -278,9 +244,6 @@ class GameEngine:
         pygame.display.flip()
     
     def _draw_quiz(self):
-        """
-        Draw the quiz gameplay screen
-        """
         self.screen.fill(COLOR_WHITE)
         
         # Draw header with progress
@@ -335,17 +298,6 @@ class GameEngine:
             self.screen.blit(next_label, (SCREEN_WIDTH - 250, SCREEN_HEIGHT - 40))
     
     def _wrap_text(self, text, font, max_width):
-        """
-        Wrap text to fit within max width
-        
-        Args:
-            text: str - Text to wrap
-            font: pygame.font.Font - Font for measuring
-            max_width: int - Maximum width
-            
-        Returns:
-            list - Wrapped text lines
-        """
         words = text.split()
         lines = []
         current_line = []
@@ -365,9 +317,6 @@ class GameEngine:
         return lines if lines else [text]
     
     def run(self):
-        """
-        Main game loop
-        """
         while self.running:
             self.handle_events()
             self.update()
@@ -379,7 +328,6 @@ class GameEngine:
 
 
 def main():
-    """Entry point for the game"""
     engine = GameEngine()
     engine.run()
 
