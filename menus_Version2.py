@@ -1,25 +1,14 @@
-"""
-MENUS - Main menu, mode selection, pause menu, and results screen
-Handles all menu UI and navigation between game states
-"""
 
 import pygame
 from constants import *
 from ui_components import Button, NumberInput
 
 class MainMenu:
-    """
-    Main menu screen with pixel art aesthetic
-    Options: Play, Settings, Quit
-    """
-    
     def __init__(self):
-        """Initialize main menu"""
         self.buttons = []
         self._create_buttons()
     
     def _create_buttons(self):
-        """Create menu buttons with pixel art spacing"""
         button_width = 200
         button_height = 60
         center_x = (SCREEN_WIDTH - button_width) // 2
@@ -64,40 +53,16 @@ class MainMenu:
         self.buttons.append(("quit", quit_btn))
     
     def update(self, mouse_pos, mouse_clicked):
-        """
-        Update menu button states
-        
-        Args:
-            mouse_pos: tuple - Current mouse position
-            mouse_clicked: bool - Whether mouse is clicked
-        """
         for _, btn in self.buttons:
             btn.update(mouse_pos, mouse_clicked)
     
     def handle_click(self, mouse_pos):
-        """
-        Handle mouse click on menu
-        
-        Args:
-            mouse_pos: tuple - Click position
-            
-        Returns:
-            str - Action name or None
-        """
         for action, btn in self.buttons:
             if btn.is_clicked(mouse_pos, True):
                 return action
         return None
     
     def draw(self, surface, font_large, font_medium):
-        """
-        Draw main menu with title and buttons
-        
-        Args:
-            surface: pygame.Surface - Surface to draw on
-            font_large: pygame.font.Font - Large font for title
-            font_medium: pygame.font.Font - Medium font for buttons
-        """
         surface.fill(COLOR_WHITE)
         
         # Draw title with pixel art style
@@ -120,10 +85,6 @@ class MainMenu:
 
 
 class ModeSelectionMenu:
-    """
-    Game mode selection menu
-    Choose between Classic, Sudden Death, and Marathon modes
-    """
     
     def __init__(self):
         """Initialize mode selection menu"""
@@ -177,24 +138,16 @@ class ModeSelectionMenu:
         self.buttons.append(("back", back_btn, ""))
     
     def update(self, mouse_pos, mouse_clicked):
-        """Update button states"""
         for _, btn, _ in self.buttons:
             btn.update(mouse_pos, mouse_clicked)
     
     def handle_click(self, mouse_pos):
-        """
-        Handle click on mode selection
-        
-        Returns:
-            str - Selected mode or action
-        """
         for action, btn, _ in self.buttons:
             if btn.is_clicked(mouse_pos, True):
                 return action
         return None
     
     def draw(self, surface, font_large, font_medium, font_small):
-        """Draw mode selection menu"""
         surface.fill(COLOR_WHITE)
         
         title = font_large.render("SELECT GAME MODE", True, COLOR_PURPLE)
@@ -214,18 +167,7 @@ class ModeSelectionMenu:
 
 
 class QuestionCountMenu:
-    """
-    Menu for selecting number of questions
-    Only available in Classic mode
-    """
-    
     def __init__(self, mode):
-        """
-        Initialize question count selection
-        
-        Args:
-            mode: str - Game mode (determines max questions)
-        """
         self.mode = mode
         self.number_input = NumberInput(
             SCREEN_WIDTH // 2 - 75,
@@ -253,26 +195,14 @@ class QuestionCountMenu:
         )
     
     def handle_event(self, event):
-        """
-        Handle keyboard input
-        
-        Args:
-            event: pygame.event.Event - Input event
-        """
         self.number_input.handle_event(event)
     
     def update(self, mouse_pos, mouse_clicked):
-        """Update button states"""
         self.start_btn.update(mouse_pos, mouse_clicked)
         self.back_btn.update(mouse_pos, mouse_clicked)
     
     def handle_click(self, mouse_pos):
-        """
-        Handle click events
-        
-        Returns:
             str or int - "back", or number of questions to start
-        """
         if self.back_btn.is_clicked(mouse_pos, True):
             return "back"
         if self.start_btn.is_clicked(mouse_pos, True):
@@ -280,7 +210,6 @@ class QuestionCountMenu:
         return None
     
     def draw(self, surface, font_large, font_medium):
-        """Draw question count selection menu"""
         surface.fill(COLOR_WHITE)
         
         title = font_large.render("SELECT QUESTION COUNT", True, COLOR_PURPLE)
@@ -302,13 +231,7 @@ class QuestionCountMenu:
 
 
 class PauseMenu:
-    """
-    In-game pause menu
-    Displayed when ESC is pressed during gameplay
-    """
-    
     def __init__(self):
-        """Initialize pause menu"""
         self.resume_btn = Button(
             SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 60, 200, 50,
             "RESUME",
@@ -326,17 +249,10 @@ class PauseMenu:
         )
     
     def update(self, mouse_pos, mouse_clicked):
-        """Update button states"""
         self.resume_btn.update(mouse_pos, mouse_clicked)
         self.quit_btn.update(mouse_pos, mouse_clicked)
     
     def handle_click(self, mouse_pos):
-        """
-        Handle click on pause menu
-        
-        Returns:
-            str - "resume" or "quit"
-        """
         if self.resume_btn.is_clicked(mouse_pos, True):
             return "resume"
         if self.quit_btn.is_clicked(mouse_pos, True):
@@ -344,14 +260,6 @@ class PauseMenu:
         return None
     
     def draw(self, surface, font_large, font_medium):
-        """
-        Draw semi-transparent pause menu overlay
-        
-        Args:
-            surface: pygame.Surface - Game surface
-            font_large: pygame.font.Font - Large font
-            font_medium: pygame.font.Font - Medium font
-        """
         # Draw semi-transparent overlay
         overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         overlay.set_alpha(128)
@@ -379,11 +287,6 @@ class PauseMenu:
 
 
 class ResultsScreen:
-    """
-    Results screen displayed after quiz completion
-    Shows score, grade, and statistics
-    """
-    
     def __init__(self, results):
         """
         Initialize results screen
@@ -409,17 +312,10 @@ class ResultsScreen:
         )
     
     def update(self, mouse_pos, mouse_clicked):
-        """Update button states"""
         self.restart_btn.update(mouse_pos, mouse_clicked)
         self.menu_btn.update(mouse_pos, mouse_clicked)
     
     def handle_click(self, mouse_pos):
-        """
-        Handle click on results screen
-        
-        Returns:
-            str - "restart" or "menu"
-        """
         if self.restart_btn.is_clicked(mouse_pos, True):
             return "restart"
         if self.menu_btn.is_clicked(mouse_pos, True):
@@ -427,15 +323,6 @@ class ResultsScreen:
         return None
     
     def draw(self, surface, font_large, font_medium, font_small):
-        """
-        Draw results screen with score and statistics
-        
-        Args:
-            surface: pygame.Surface - Surface to draw on
-            font_large: pygame.font.Font - Large font
-            font_medium: pygame.font.Font - Medium font
-            font_small: pygame.font.Font - Small font
-        """
         surface.fill(COLOR_WHITE)
         
         # Title
