@@ -1,37 +1,11 @@
-"""
-GAME LOGIC - Quiz game state and mechanics
-Handles question management, scoring, timers, and game flow
-"""
-
 import random
 import time
 from constants import *
 from questions import QUESTIONS_DATA
 
 class QuizGame:
-    """
-    Main quiz game logic handler
-    Manages current question, scoring, timer, and game flow
-    
-    Attributes:
-        mode: str - Current game mode (CLASSIC, SUDDEN_DEATH, MARATHON)
-        total_questions: int - Number of questions to attempt
-        current_question_index: int - Index of current question
-        score: int - Number of correct answers
-        start_time: float - When the quiz started
-        question_start_time: float - When current question started
-        question_answered: bool - Whether current question is answered
-        game_over: bool - Whether the game has ended
-    """
-    
+    # logic handler
     def __init__(self, mode, question_count):
-        """
-        Initialize a new quiz game
-        
-        Args:
-            mode: str - Game mode (CLASSIC, SUDDEN_DEATH, MARATHON)
-            question_count: int - Number of questions to ask
-        """
         self.mode = mode
         self.total_questions = question_count if mode != GameMode.MARATHON else MAX_QUESTION_COUNT
         self.current_question_index = 0
@@ -55,10 +29,6 @@ class QuizGame:
         self.load_question()
     
     def load_question(self):
-        """
-        Load the next question and generate shuffled answers
-        Returns answer button data for UI to render
-        """
         # Check if we've completed the quiz
         if self.mode == GameMode.MARATHON:
             # Marathon ends when all unique questions are answered correctly
@@ -98,16 +68,6 @@ class QuizGame:
         self.current_question_index += 1
     
     def _generate_shuffled_answers(self, correct_answer, question_idx):
-        """
-        Generate 3 incorrect answers and shuffle all 4
-        
-        Args:
-            correct_answer: str - The correct answer text
-            question_idx: int - Index of current question
-            
-        Returns:
-            list - Shuffled answers with correct at index 0 before shuffle
-        """
         # Get 3 incorrect answers from other questions
         wrong_answers = []
         available_indices = [i for i in range(len(QUESTIONS_DATA)) if i != question_idx]
@@ -127,15 +87,6 @@ class QuizGame:
         return shuffled
     
     def answer_question(self, answer_index):
-        """
-        Process user's answer selection
-        
-        Args:
-            answer_index: int - Index of selected answer (0-3)
-            
-        Returns:
-            bool - True if answer is correct, False otherwise
-        """
         if self.question_answered:
             return None
         
@@ -155,59 +106,26 @@ class QuizGame:
         return is_correct
     
     def next_question(self):
-        """
-        Move to next question in the quiz
-        """
         if not self.game_over:
             self.load_question()
     
     def get_elapsed_time(self):
-        """
-        Get time elapsed since quiz started
-        
-        Returns:
-            float - Seconds elapsed
-        """
         return time.time() - self.start_time
     
     def get_question_time_remaining(self):
-        """
-        Get time remaining for current question
-        
-        Returns:
-            float - Seconds remaining (0 if time expired)
-        """
         elapsed = time.time() - self.question_start_time
         remaining = QUESTION_TIMER_SECONDS - elapsed
         return max(0, remaining)
     
     def is_time_expired(self):
-        """
-        Check if time for current question has expired
-        
-        Returns:
-            bool - True if time is up
-        """
         return self.get_question_time_remaining() <= 0
     
     def get_score_percentage(self):
-        """
-        Calculate current score as percentage
-        
-        Returns:
-            float - Score percentage (0-100)
-        """
         if self.current_question_index == 0:
             return 0
         return (self.score / self.current_question_index) * 100
     
     def get_results_summary(self):
-        """
-        Get final results and grade
-        
-        Returns:
-            dict - Results data with score, percentage, and grade
-        """
         percentage = self.get_score_percentage()
         
         # Assign letter grade
